@@ -3,15 +3,19 @@ import { validate } from "graphql";
 import React from "react";
 import { useForm } from "react-hook-form";
 
+interface IForm {
+    email: string;
+    password: string;
+}
+
 export const LoggedOutRouter = () =>  {
-    const { register, watch, handleSubmit, formState: { errors } } = useForm();
+    const { register, watch, handleSubmit, formState: { errors } } = useForm<IForm>();
     const onSubmit = () => {
         console.log(watch("email"));
     }
     const onInvalid = () => {
         console.log("cannot create account!");
     };
-    console.log(errors);
     
     
     return (
@@ -22,7 +26,18 @@ export const LoggedOutRouter = () =>  {
                     <input {...register("email", {
                         required:"this is required", pattern: /^[A-Za-z0-9._%+-]+@gmail.com$/,
                     })} 
-                    type="email" name="email" required placeholder="email" />
+                    type="email" name="email" placeholder="email" />
+                    {errors.email?.message && (
+                    <span className="font-bold text-red-600">
+                        {errors.email?.message}
+                    </span> 
+                    )}
+                    {
+                        errors.email?.type === "pattern" && (
+                            <span className="font-bold text-red-600">
+                                Only gmail allowed!
+                            </span> 
+                    )}
                 </div>
                 <div>
                     <input {...register("password", {required:true})} type="password" name="password" required placeholder="password" />
