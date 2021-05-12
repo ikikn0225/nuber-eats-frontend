@@ -39,7 +39,7 @@ export const CreateAccount = () => {
         } = data;
         if(ok) {
             alert("Account Created! Log in now!");
-            history.push("/login");
+            history.push("/");
         }
     };
     const [ createAccountMutation, { loading, data:createAccountMutationResult } ] = useMutation<createAccountMutation, createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, {
@@ -107,7 +107,7 @@ export const CreateAccount = () => {
                     {createAccountMutationResult?.createAccount.error && <FormError errorMessage={createAccountMutationResult.createAccount.error}/>}
                 </form>
                 <div>
-                    Alreay have an account? <Link to="/login" className=" text-green-600 hover:underline" > Log in now</Link>
+                    Alreay have an account? <Link to="/" className=" text-green-600 hover:underline" > Log in now</Link>
                 </div>
             </div>
         </div>
