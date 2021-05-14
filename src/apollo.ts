@@ -10,6 +10,8 @@ export const authTokenVar = makeVar(token);
 const httpLink = createHttpLink({
     uri: "http://localhost:4000/graphql",
   });
+  localStorage.clear();
+  console.log(authTokenVar());
   
   const authLink = setContext((_, { headers }) => {
     return {
@@ -19,7 +21,6 @@ const httpLink = createHttpLink({
       },
     };
   });
-  
 
 export const client = new ApolloClient({
     link: authLink.concat(httpLink),
@@ -35,8 +36,8 @@ export const client = new ApolloClient({
                   token: {
                       read() {
                           return authTokenVar();
-                      },
-                  },
+                      }
+                  }
               }
           }
       }
