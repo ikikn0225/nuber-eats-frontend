@@ -68,7 +68,7 @@ export const Restaurants = () => {
                 {...register("searchTerm", {
                     required: true,                    
                 })}
-                type="Search" 
+                type="Search"
                 className="input rounded-md border-0 w-3/4 md:w-3/12" 
                 placeholder="Search restaurants..."/>
             </form>
@@ -78,8 +78,8 @@ export const Restaurants = () => {
                         {data?.allCategories.categories?.map(category => (
                             <div key={category.id} className="flex flex-col group items-center cursor-pointer">
                                 <div 
-                                className="w-16 h-16 bg-cover transform group-hover:bg-gray-200 rounded-full"
-                                style={{ backgroundImage: `url(${category.coverImg})`}}
+                                    className="w-16 h-16 bg-cover transform group-hover:bg-gray-200 rounded-full"
+                                    style={{ backgroundImage: `url(${category.coverImg})`}}
                                 ></div>
                                 <span className="mt-1 text-sm text-center font-medium">{category.name}</span>
                             </div>

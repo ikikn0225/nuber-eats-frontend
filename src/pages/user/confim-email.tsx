@@ -46,7 +46,7 @@ export const ConfirmEmail = () => {
       onCompleted,
     }
   );
-  useEffect(() => {
+  useEffect(() => { //렌더링 이후에 어떤 일을 수행해야하는지 말한다.
     const [_, code] = window.location.href.split("code=");
     verifyEmail({
       variables: {
