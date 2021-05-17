@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
-import { Restaurant } from "../../components/restauratn";
-import { RESTAURANT_FRAGMENT } from "../../fragment";
+import { Link } from "react-router-dom";
+import { Restaurant } from "../../components/restaurant";
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
 import { restaurantsQuery, restaurantsQueryVariables } from "../../__generated__/restaurantsQuery";
 
 const RESTAURANTS_QUERY = gql `
@@ -14,11 +15,7 @@ const RESTAURANTS_QUERY = gql `
             ok
             error
             categories {
-                id
-                name
-                coverImg
-                slug
-                restaurantCount
+                ...CategoryParts
             }
         }
         restaurants(input:$input) {
@@ -32,6 +29,7 @@ const RESTAURANTS_QUERY = gql `
         }
     }
     ${RESTAURANT_FRAGMENT}
+    ${CATEGORY_FRAGMENT}
 `;
 
 interface IFormProps {
@@ -76,13 +74,15 @@ export const Restaurants = () => {
                 <div className=" max-w-screen-2xl pb-20 mx-auto mt-8">
                     <div className="flex justify-around max-w-screen-sm mx-auto">
                         {data?.allCategories.categories?.map(category => (
-                            <div key={category.id} className="flex flex-col group items-center cursor-pointer">
+                            <Link key={category.id} to={`/category/${category.slug}`}>
+                            <div className="flex flex-col group items-center cursor-pointer">
                                 <div 
                                     className="w-16 h-16 bg-cover transform group-hover:bg-gray-200 rounded-full"
                                     style={{ backgroundImage: `url(${category.coverImg})`}}
                                 ></div>
                                 <span className="mt-1 text-sm text-center font-medium">{category.name}</span>
                             </div>
+                            </Link>
                         ))}
                     </div>
                     <div className="grid md:grid-cols-3 gap-x-3 gap-y-5 mt-16">
