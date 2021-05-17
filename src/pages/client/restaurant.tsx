@@ -33,5 +33,19 @@ export const Restaurant = () => {
     });
     console.log(data);
     
-    return <h1>Restaurant</h1>;
+    return (
+        <div>
+            <div className="bg-gray-800 py-28 bg-contain bg-center relative" style={{backgroundImage: `url(../images/${data?.restaurant.restaurant?.coverImg})`,
+            }}
+            >
+                <div className=" w-screen bg-gradient-to-t from-black absolute inset-x-0 bottom-0 h-16">
+                        <h4 className="text-white text-5xl mb-3">{data?.restaurant.restaurant?.name}</h4>
+                        <div className="flex flex-row">
+                            <h5 className="text-white text-md font-light mb-2 mr-3">{data?.restaurant.restaurant?.category?.name}</h5>
+                            <h5 className="text-white text-md font-light">{data?.restaurant.restaurant?.address}</h5>
+                        </div>
+                </div>
+            </div>
+        </div>
+    );
 }
