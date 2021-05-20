@@ -1,18 +1,19 @@
 import { render, RenderResult, waitFor } from "@testing-library/react";
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { Login } from "../../pages/login";
+import { Login, LOGIN_MUTATION } from "../../pages/login";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import { createMockClient } from "mock-apollo-client";
+import { createMockClient, MockApolloClient } from "mock-apollo-client";
 import userEvent from "@testing-library/user-event";
 
 
 describe("<Login />", () => {
     let renderResult: RenderResult;
+    let mockedClient: MockApolloClient;
     beforeEach(async() => {
         await waitFor(() => {
-            const mockedClient = createMockClient();
+            mockedClient = createMockClient();
             renderResult = render(
                 <HelmetProvider>
                     <Router>
@@ -23,14 +24,14 @@ describe("<Login />", () => {
                 </HelmetProvider>
             );
         });
-    })
+    });
     it("renders OK", async () => {
         await waitFor(() => {
             expect(document.title).toBe("Login | Nuber Eats");
         })
     });
     it("displays email validation error", async () => {
-        const { getByPlaceholderText, debug, getByText, getByRole } = renderResult;
+        const { getByPlaceholderText, getByRole } = renderResult;
         const email = getByPlaceholderText(/email/i);
         await waitFor(() => {
             userEvent.type(email, "this@wont");
@@ -40,8 +41,54 @@ describe("<Login />", () => {
         await waitFor(() => {
             userEvent.clear(email);
         });
-        debug();
         errorMessage = getByRole("alert");
         expect(errorMessage).toHaveTextContent(/Email is required/i);
+    });
+    it("displays password validation errors", async () => {
+        const { getByPlaceholderText, debug, getByRole } = renderResult;
+        const email = getByPlaceholderText(/email/i);
+        const submitBtn = getByRole("button");
+        await waitFor(() => {
+            userEvent.type(email, "this@wont.com");
+            userEvent.click(submitBtn);
+        });
+        const errorMessage = getByRole("alert");
+        expect(errorMessage).toHaveTextContent(/password is required/i);
+    });
+    it("submits form and call mutation", async () => {
+        const { getByPlaceholderText, getByRole } = renderResult;
+        const email = getByPlaceholderText(/email/i);
+        const password = getByPlaceholderText(/password/i);
+        const submitBtn = getByRole("button");
+        const formData = {
+            email: "real@test.com",
+            password: "123",
+        };
+        const mockedMutationResponse = jest.fn().mockResolvedValue({
+            data: {
+                login: {
+                    ok:true,
+                    token:"XXX",
+                    error: "mutation-error",
+                },
+            },
+        });
+        mockedClient.setRequestHandler(LOGIN_MUTATION, mockedMutationResponse);
+        jest.spyOn(Storage.prototype, "setItem");
+        await waitFor(() => {
+            userEvent.type(email, formData.email);
+            userEvent.type(password, formData.password);
+            userEvent.click(submitBtn);
+        });
+        expect(mockedMutationResponse).toHaveBeenCalledTimes(1);
+        expect(mockedMutationResponse).toHaveBeenCalledWith({
+            loginInput: {
+                email: formData.email,
+                password: formData.password,
+            },
+        });
+        const errorMessage = getByRole("alert");
+        expect(errorMessage).toHaveTextContent(/mutation-error/i);
+        expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX");
     });
 });
