@@ -41,5 +41,7 @@ describe("<Login />", () => {
             userEvent.clear(email);
         });
         debug();
+        errorMessage = getByRole("alert");
+        expect(errorMessage).toHaveTextContent(/Email is required/i);
     });
 });
