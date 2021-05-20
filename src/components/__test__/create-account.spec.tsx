@@ -2,9 +2,24 @@ import { ApolloProvider } from "@apollo/client";
 import userEvent from "@testing-library/user-event";
 import { createMockClient, MockApolloClient } from "mock-apollo-client";
 import React from "react";
+import { useHistory } from "react-router";
 import { CreateAccount, CREATE_ACCOUNT_MUTATION } from "../../pages/create-account";
 import { render, waitFor, RenderResult } from "../../test-utils";
 import { UserRole } from "../../__generated__/globalTypes";
+
+const mockPush= jest.fn();
+
+jest.mock("react-router-dom", () => {
+    const realModule = jest.requireActual("react-router-dom");
+    return {
+        ...realModule,
+        useHistory: () => {
+            return {
+                push: mockPush,
+            };
+        },
+    };
+});
 
 describe("<CreateAccount/>", () => {
     let mockedClient: MockApolloClient;
@@ -81,6 +96,10 @@ describe("<CreateAccount/>", () => {
         });
         expect(window.alert).toHaveBeenCalledWith("Account Created! Log in now!");
         const mutationError = getByRole("alert");
+        expect(mockPush).toHaveBeenCalledWith("/");
         expect(mutationError).toHaveTextContent("mutation-error");
     })
+    afterAll(() => {
+        jest.clearAllMocks();
+    });
 });
