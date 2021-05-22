@@ -28,14 +28,11 @@ describe("Create Account", () => {
             }
         });
         cy.visit("/create-account");
-        cy.findByPlaceholderText(/email/i).type("wsx2792@gmail.com");
-        cy.findByPlaceholderText(/password/i).type("Djaakdi1213!!");
+        cy.findByPlaceholderText(/email/i).type("wsx29999@email.com");
+        cy.findByPlaceholderText(/password/i).type("123456");
         cy.findByRole("button").click();
         cy.wait(1000);
-        cy.title().should("eq", "Login | Nuber Eats");
-        cy.findByPlaceholderText(/email/i).type("wsx2792@gmail.com");
-        cy.findByPlaceholderText(/password/i).type("Djaakdi1213!!");
-        cy.findByRole("button").click();
-        cy.window().its("localStorage.nuber-token").should("be.a", "string");
+        // @ts-ignore
+        cy.login("wsx29999@email.com", "123456");
     })
 })

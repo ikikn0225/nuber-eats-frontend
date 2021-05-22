@@ -13,10 +13,7 @@ describe("Log In", () => {
         cy.findByRole("alert").should("have.text", "Password is required")
     });
     it("can fill out the form and login", () => {
-        cy.visit("/")
-        cy.findByPlaceholderText(/email/i).type("wsx2792@gmail.com")
-        cy.findByPlaceholderText(/password/i).type("Djaakdi1213!!")
-        cy.findByRole("button").should("not.have.class", "pointer-events-none").click();
-        cy.window().its("localStorage.nuber-token").should("be.a", "string");
+        // @ts-ignore
+        cy.login("wsx2792@gmail.com", "Djaakdi1213!!");
     });
 })
