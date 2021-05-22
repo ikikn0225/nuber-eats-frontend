@@ -12,27 +12,22 @@ describe("Create Account", () => {
     })
     it("should be able to create account and login", () => {
         cy.intercept("http://localhost:4000/graphql", (req) => {
-            const { operationName } = req.body;
-            if(operationName && operationName === "createAccountMutation") {
-                req.reply((res) => {
-                    res.send({
-                        data: {
-                            createAccount: {
-                                ok: true,
-                                error: null,
-                                __typename: "CreateAccountOutput",
-                            },
-                        },
-                    });
-                });
-            }
+        const { operationName } = req.body;
+        if (operationName && operationName === "createAccountMutation") {
+            req.reply((res) => {
+            res.send({
+                fixture: "auth/create-account.json",
+            });
+            });
+        }
         });
         cy.visit("/create-account");
-        cy.findByPlaceholderText(/email/i).type("wsx29999@email.com");
-        cy.findByPlaceholderText(/password/i).type("123456");
+        cy.findByPlaceholderText(/email/i).type("nico@nomadcoders.co");
+        cy.findByPlaceholderText(/password/i).type("121212");
         cy.findByRole("button").click();
         cy.wait(1000);
         // @ts-ignore
-        cy.login("wsx29999@email.com", "123456");
+        cy.login("nico@nomadcoders.co", "121212");
+        
     })
 })
