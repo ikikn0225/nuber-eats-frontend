@@ -9,4 +9,12 @@
     @apply mt-3 text-white text-lg font-medium py-4 bg-green-600 hover:bg-green-700 transition-colors;
 }
 
+.container {
+    @apply max-w-screen-2xl mx-auto;
+}
+
+.link {
+    @apply text-green-600 hover:underline;
+}
+
 @tailwind utilities;
