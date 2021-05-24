@@ -11,6 +11,7 @@ const CREATE_RESTAURANT_MUTATION = gql `
         createRestaurant(input:$input) {
             ok
             error
+            restaurantId
         }
     }
 `;
@@ -24,11 +25,11 @@ interface IFormProps {
 
 export const AddRestaurant = () => {
     const onCompleted = (data:createRestaurant) => {
-        const { createRestaurant: { ok, error } } = data;
+        const { createRestaurant: { ok, restaurantId } } = data;
         if(ok)
             setUploading(false);
     }
-    const [createAccountMutation, {data}] = useMutation<createRestaurant, createRestaurantVariables>(CREATE_RESTAURANT_MUTATION, {
+    const [createRestauratnMutation, {data}] = useMutation<createRestaurant, createRestaurantVariables>(CREATE_RESTAURANT_MUTATION, {
         onCompleted,
     });
     const {register, getValues, formState, formState: { errors }, handleSubmit } = useForm<IFormProps>({
@@ -48,7 +49,7 @@ export const AddRestaurant = () => {
                     body: formBody,
                 })
             ).json();
-            createAccountMutation({
+            createRestauratnMutation({
                 variables: {
                     input: {
                         name,
@@ -58,9 +59,7 @@ export const AddRestaurant = () => {
                     }
                 }
             })
-        } catch(e) {
-            
-        }
+        } catch(e) {}
         
 
     }
