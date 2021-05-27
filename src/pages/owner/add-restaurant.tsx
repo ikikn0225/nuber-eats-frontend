@@ -60,7 +60,7 @@ export const AddRestaurant = () => {
             history.push("/");
         }
     }
-    const [createRestauratnMutation, {data}] = useMutation<createRestaurant, createRestaurantVariables>(CREATE_RESTAURANT_MUTATION, {
+    const [createRestaurantMutation, {data}] = useMutation<createRestaurant, createRestaurantVariables>(CREATE_RESTAURANT_MUTATION, {
         onCompleted,
     });
     const {register, getValues, formState, formState: { errors }, handleSubmit } = useForm<IFormProps>({
@@ -75,13 +75,21 @@ export const AddRestaurant = () => {
             const formBody = new FormData();
             formBody.append("file", actualFile);
             const { url:coverImg }= await (
+//  async 하나에 await 여러개 선언하는건 상관이 없다. 
+//  Promise 객체, async/await의 개념을 완벽히 이해하면 오해할 일이 없다.
+//  작동방식
+//  먼저 fetch가 동작해서 데이터를 보낸다.
+//  비동기적 함수(AJAX, setTimeout)면 WebAPI를 통해 대기 후 해당 함수를 CallBack Queue로 이동한다. fetch도 서버와 비동기적 통신하는 함수이므로 Web API로 들어간다.
+//  밖에 await json()을 실행하게 된다.
+//  json()은 response 스트림을 가져와 스트림이 완료될때까지 읽고 텍스트를 JSON으로 바꾸는 결과로 해결되는 promise 객체를 반환한다.
+//  await를 선언해줌으로서 json 값을 가져올 수 있게 된다.
                 await fetch("http://localhost:4000/uploads/", {
                     method:"POST",
                     body: formBody,
                 })
             ).json();
             setImageUrl(coverImg)
-            createRestauratnMutation({
+            createRestaurantMutation({
                 variables: {
                     input: {
                         name,
