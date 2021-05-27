@@ -28,12 +28,12 @@ export const MyRestaurants = () => {
         </Helmet>
         <div className="max-w-screen-2xl mx-auto mt-32">
           <h2 className="text-4xl font-medium mb-10">My Restaurants</h2>
+          <Link className="text-green-600 hover:underline" to="/add-restaurant">
+            Create Restaurant &rarr;
+          </Link>
           {data?.myRestaurants.ok && data.myRestaurants.restaurants.length === 0 ? (
             <>
               <h4 className="text-xl mb-5">You have no restaurants.</h4>
-              <Link className="text-green-600 hover:underline" to="/add-restaurant">
-                Create Restaurant &rarr;
-              </Link>
             </>
           ) : 
           <div className="grid md:grid-cols-3 gap-x-3 gap-y-5 mt-16">
