@@ -22,10 +22,10 @@ const CREATE_RESTAURANT_MUTATION = gql`
 `;
 
 interface IFormProps {
-  name: string;
-  address: string;
-  categoryName: string;
-  file: FileList;
+    name: string;
+    address: string;
+    categoryName: string;
+    file: FileList;
 }
 
 export const AddRestaurant = () => {
@@ -40,29 +40,32 @@ export const AddRestaurant = () => {
       const { name, categoryName, address } = getValues();
       setUploading(false);
       const queryResult = client.readQuery({ query: MY_RESTAURANTS_QUERY });
-      client.writeQuery({
-        query: MY_RESTAURANTS_QUERY,
-        data: {
-          myRestaurants: {
-            ...queryResult.myRestaurants,
-            restaurants: [
-              {
-                address,
-                category: {
-                  name: categoryName,
-                  __typename: "Category",
+      console.log(queryResult);
+      if(queryResult) {
+        client.writeQuery({
+          query: MY_RESTAURANTS_QUERY,
+          data: {
+            myRestaurants: {
+              ...queryResult.myRestaurants,
+              restaurants: [
+                {
+                  address,
+                  category: {
+                    name: categoryName,
+                    __typename: "Category",
+                  },
+                  coverImg: imageUrl,
+                  id: restaurantId,
+                  isPromoted: false,
+                  name,
+                  __typename: "Restaurant",
                 },
-                coverImg: imageUrl,
-                id: restaurantId,
-                isPromoted: false,
-                name,
-                __typename: "Restaurant",
-              },
-              ...queryResult.myRestaurants.restaurants,
-            ],
+                ...queryResult.myRestaurants.restaurants,
+              ],
+            },
           },
-        },
-      });
+        });
+      }
       history.push("/");
     }
   };
@@ -78,7 +81,7 @@ export const AddRestaurant = () => {
   const [uploading, setUploading] = useState(false);
   const onSubmit = async () => {
     try {
-      setUploading(true);
+      // setUploading(true);
       const { file, name, categoryName, address } = getValues();
       const actualFile = file[0];
       const formBody = new FormData();
@@ -94,13 +97,13 @@ export const AddRestaurant = () => {
         variables: {
           input: {
             name,
-            categoryName,
-            address,
             coverImg,
+            address,
+            categoryName,
           },
         },
       });
-    } catch (e) {}
+    } catch (e) {console.log(e.response.data);}
   };
   return (
     <div className="container flex flex-col items-center mt-52">
@@ -133,7 +136,8 @@ export const AddRestaurant = () => {
         <div>
           <input
             type="file"
-            accept="image/*"{...register("file", {required:true})}
+            accept="image/*"
+            {...register("file", {required:true})}
           />
         </div>
         <Button
