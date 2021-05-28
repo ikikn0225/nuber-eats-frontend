@@ -37,7 +37,6 @@ export const AddDish = () => {
     const [optionsNumber, setOptionsNumber] = useState<number[]>([]);
     const onAddOptionClick = () => {
         
-        console.log(optionsNumber);
         setOptionsNumber((current) => [Date.now(), ...current]);
     };
 
@@ -60,20 +59,23 @@ export const AddDish = () => {
     });
     const onSubmit = () => {
         const { name, price, description, ...rest } = getValues();
-        console.log(rest);
+        const optionObjects = optionsNumber.map((theId) => ({
+            name: rest[`${theId}-optionName`],
+            extra: +rest[`${theId}-optionExtra`],
+          }));
         
-        /*createDishMutation({
+        createDishMutation({
             variables: {
                 input: {
                     name,
                     price:+price,
                     description,
                     restaurantId:+restaurantId,
-
+                    options:optionObjects,
                 },
             },
         });
-        history.goBack();*/
+        history.goBack();
     }
     return (
         <div className="container flex flex-col items-center mt-52">
@@ -119,7 +121,12 @@ export const AddDish = () => {
                                     min={0}
                                     placeholder="Option Extra"
                                 />
-                                <span onClick={()=> onDeleteClick(id)}>Delete Option</span>
+                                <span
+                                className="cursor-pointer text-white bg-red-500 ml-3 py-3 px-4 mt-5 bg-"
+                                onClick={() => onDeleteClick(id)}
+                                >
+                                Delete Option
+                                </span>
                             </div>
                         ))
                     }
