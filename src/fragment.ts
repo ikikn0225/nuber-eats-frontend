@@ -41,4 +41,3 @@ export const DISH_FRAGMENT = gql`
     }
   }
 `;
-
