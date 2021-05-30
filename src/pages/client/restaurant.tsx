@@ -2,7 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { useParams } from "react-router";
-import { RESTAURANT_FRAGMENT } from "../../fragment";
+import { Dish } from "../../components/dish";
+import { RESTAURANT_FRAGMENT, DISH_FRAGMENT } from "../../fragment";
 import { restaurant, restaurantVariables } from "../../__generated__/restaurant";
 
 const RESTAURANT_QUERY = gql`
@@ -12,10 +13,14 @@ const RESTAURANT_QUERY = gql`
             ok
             restaurant {
                 ...RestaurantParts
+                menu {
+                    ...DishParts
+                }
             }
         }
     }
     ${RESTAURANT_FRAGMENT}
+    ${DISH_FRAGMENT}
 `;
 
 interface IRestaurantParams {
@@ -35,7 +40,7 @@ export const Restaurant = () => {
     
     return (
         <div>
-            <div className="bg-gray-800 py-28 bg-contain bg-center relative" style={{backgroundImage: `url(../images/${data?.restaurant.restaurant?.coverImg})`,
+            <div className="bg-gray-800 py-28 bg-contain bg-center relative" style={{backgroundImage: `url(${data?.restaurant.restaurant?.coverImg})`,
             }}
             >
                 <div className=" w-screen bg-gradient-to-t from-black absolute inset-x-0 bottom-0 h-16">
@@ -46,6 +51,18 @@ export const Restaurant = () => {
                         </div>
                 </div>
             </div>
+                <div className="container grid md:grid-cols-3 gap-x-3 gap-y-5 mt-16">
+                {data?.restaurant.restaurant?.menu.map((dish, index) => (
+                    <Dish
+                        key={index}
+                        name={dish.name} 
+                        description={dish.description}
+                        price={dish.price + ""}
+                        isCustomer={true}
+                        options={dish.options}
+                    />
+                ))}
+                </div>
         </div>
     );
 }
