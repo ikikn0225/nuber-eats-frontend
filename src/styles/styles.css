@@ -637,6 +637,31 @@ video {
   transition-duration: 150ms;
 }
 
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1536px;
+}
+
+.link {
+  --tw-text-opacity: 1;
+  color: rgba(5, 150, 105, var(--tw-text-opacity));
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  --tw-bg-opacity: 1;
+  background-color: rgba(5, 150, 105, var(--tw-bg-opacity));
+}
+
+.btn:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgba(4, 120, 87, var(--tw-bg-opacity));
+}
+
 .btn {
   font-weight: 500;
   font-size: 1.125rem;
@@ -656,21 +681,6 @@ video {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
-}
-
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 1536px;
-}
-
-.link {
-  --tw-text-opacity: 1;
-  color: rgba(5, 150, 105, var(--tw-text-opacity));
-}
-
-.link:hover {
-  text-decoration: underline;
 }
 
 .space-y-0 > :not([hidden]) ~ :not([hidden]) {
