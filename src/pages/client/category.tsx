@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useEffect } from "react";
+import React from "react";
 import { useLocation, useParams } from "react-router";
 import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
 import { category, categoryVariables } from "../../__generated__/category";

@@ -637,6 +637,27 @@ video {
   transition-duration: 150ms;
 }
 
+.btn {
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.btn {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  --tw-text-opacity: 1;
+  color: rgba(255, 255, 255, var(--tw-text-opacity));
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
 .container {
   margin-left: auto;
   margin-right: auto;
