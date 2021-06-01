@@ -57,7 +57,7 @@ export const Restaurant = () => {
     const triggerCancelOrder = () => {
         setOrderStarted(false);
         setOrderItems([]);
-    }
+    };
     const history = useHistory();
     const onCompleted = (data: createOrder) => {
         const { createOrder:{ ok, orderId } } = data;
