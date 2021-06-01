@@ -12,7 +12,6 @@ interface IDishProps {
     orderStarted?:boolean;
     addItemToOrder?: (dishId:number) => void;
     removeFromOrder?:(dishId:number) => void;
-    addOptionToItem?:(dishId:number, option: any) => void;
 }
 
 export const Dish:React.FC<IDishProps> = ({
@@ -26,7 +25,7 @@ export const Dish:React.FC<IDishProps> = ({
     orderStarted = false,
     addItemToOrder,
     removeFromOrder,
-    addOptionToItem,
+    children: dishOptions,
     }) => {
     
     const onClick = () => {
@@ -45,30 +44,21 @@ export const Dish:React.FC<IDishProps> = ({
                 <h3 className="text-lg font-medium">
                     {name}{" "}
                     {orderStarted && (
-                        <button className="bg-green-600 text-white font-bold" onClick={onClick} >{ isSelected ? "Removed" : "Add" }</button>
+                        <button 
+                            className={`${isSelected ? "bg-red-600" : "bg-green-600"} text-white font-bold ml-3 py-1 px-3 focus:outline-none text-sm`} 
+                            onClick={onClick} 
+                        >
+                            { isSelected ? "Removed" : "Add" }
+                        </button>
                     )}
                 </h3>
                 <h4 className="font-medium">{description}</h4>
             </div>
             <span>${price}</span>
             {isCustomer && options && options?.length !== 0 && (
-                <div>
+                <div className="bg-gray-100 pl-3">
                     <h5 className="mt-8 mb-5 font-medium">Dish Options:</h5>
-                    <div>{options?.map((option, index) => (
-                        <span 
-                            onClick={() => (
-                                addOptionToItem
-                                ? addOptionToItem(id, {
-                                    name: option.name,
-                                }) 
-                                : null
-                            )}
-                            className="flex border items-center" key={index}
-                        >
-                            <h6 className="mr-2">{option.name}</h6>
-                            <h6 className="text-sm opacity-75">({option.extra})</h6>
-                        </span>
-                    ))}</div>
+                    <div className="grid gap-2 pl-5">{dishOptions}</div>
                 </div>
                 )
             }

@@ -1,11 +1,13 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React, { useState } from "react";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { Dish } from "../../components/dish";
 import { RESTAURANT_FRAGMENT, DISH_FRAGMENT } from "../../fragment";
 import { restaurant, restaurantVariables } from "../../__generated__/restaurant";
 import { CreateOrderItemInput } from "../../__generated__/globalTypes";
+import { DishOption } from "../../components/dish-option";
+import { createOrder, createOrderVariables } from "../../__generated__/createOrder";
 
 const RESTAURANT_QUERY = gql`
     query restaurant($input:RestaurantInput!) {
@@ -52,14 +54,48 @@ export const Restaurant = () => {
     const triggerStartOrder = () => {
         setOrderStarted(true);
     };
+    const triggerCancelOrder = () => {
+        setOrderStarted(false);
+        setOrderItems([]);
+    }
+    const history = useHistory();
+    const onCompleted = (data: createOrder) => {
+        const { createOrder:{ ok, orderId } } = data;
+        if(data.createOrder.ok) {
+            history.push(`/order/${orderId}`);
+        }
+    };
+    const [createOrderMutation, {loading: placingOrder }] = useMutation<createOrder, createOrderVariables>(CREATE_ORDER_MUTATION, {
+        onCompleted,
+    });
+    const triggerConfirmOrder = () => {
+        if (placingOrder) {
+            return;
+        }
+        if(orderItems.length == 0) {
+            alert("It's empty order!");
+            return;
+        }
+        // const ok = window.confirm("You are about to place an order");
+        // if(ok) {
+            createOrderMutation({
+                variables: {
+                    input:{
+                        restaurantId:+params.id,
+                        items:orderItems,
+                    },
+                },
+            });
+        // };
+    };
     const getItem = (dishId:number) => {
         return orderItems.find((item) => item.dishId === dishId)
     }
-    const isSelect = (dishId:number) => {
+    const isSelected = (dishId:number) => {
         return Boolean(getItem(dishId));
     }
     const addItemToOrder = (dishId: number) => {
-        if(isSelect(dishId)) {
+        if(isSelected(dishId)) {
             return;
         }
         setOrderItems((current) => [{dishId, options: []}, ...current]);
@@ -67,20 +103,54 @@ export const Restaurant = () => {
     const removeFromOrder = (dishId:number) => {
         setOrderItems((current) => current.filter((dish) => dish.dishId !== dishId));
     };
-    const addOptionToItem = (dishId:number, option: any) => {
-        if(!isSelect(dishId)) {
+    const addOptionToItem = (dishId:number, optionName:string) => {
+        if(!isSelected(dishId)) {
             return;
         }
         const oldItem = getItem(dishId);
-        // console.log(oldItem);
+        // console.log(option);
         
-        if(oldItem !== null && oldItem) {
+        if(oldItem) {
+            const hasOption = Boolean(
+                oldItem.options?.find((aOption) => aOption.name === optionName)
+            );
+            if(!hasOption){
+                removeFromOrder(dishId);
+                setOrderItems((current) => [
+                    {dishId, options:[{name: optionName}, ...oldItem.options!]},
+                    ...current,
+                ]);
+            }
+        }
+    };
+    const removeOptionFromItem = (dishId:number, optionName:string) => {
+        if(!isSelected(dishId)) {
+            return;
+        }
+        
+        const oldItem = getItem(dishId);
+        if(oldItem) {
             removeFromOrder(dishId);
             setOrderItems((current) => [
-                {dishId, options:[option, ...oldItem.options!]},
+                {
+                    dishId,
+                    options: oldItem.options?.filter(
+                        (option) => option.name !== optionName
+                    ),
+                },
                 ...current,
             ]);
+            return;
         }
+    }
+    const isOptionSelected = (dishId: number, optionName:string) => {
+        const item = getItem(dishId);
+        if(item) {
+            return Boolean(getOptionFromItem(item, optionName));
+        }
+    };
+    const getOptionFromItem = (item: CreateOrderItemInput, optionName:string) => {
+        return item.options?.find((option) => option.name === optionName)
     };
     console.log(orderItems);
     return (
@@ -97,10 +167,23 @@ export const Restaurant = () => {
                 </div>
             </div>
                 <div className="container flex flex-col items-end pb-32 mt-5">
-                    <button onClick={triggerStartOrder} className="btn px-10">
-                        {orderStarted ? "Ordering" : "Start Order" }
-                    </button>
-                    <div className="w-full grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+                    {!orderStarted &&
+                        <button onClick={triggerStartOrder} className="btn pl-10 pr-10">
+                            Start Order
+                        </button>
+                    }
+                    {orderStarted &&(
+                        <div className="grid">
+                            <button onClick={triggerConfirmOrder} className="btn px-10 mr-2">
+                                {placingOrder ? "Loading..." : "Confirm Order"}
+                            </button>
+                            <button onClick={triggerCancelOrder} className="btn bg-red-600 px-10 mr-2">
+                                Cancel Order
+                            </button>
+                        </div>
+                    )
+                    }
+                    <div className="w-full grid mt-16 md:grid-cols-3 px-10 gap-x-5 gap-y-10">
                         {data?.restaurant.restaurant?.menu.map((dish, index) => (
                             <Dish
                                 key={index}
@@ -109,12 +192,27 @@ export const Restaurant = () => {
                                 description={dish.description}
                                 price={dish.price + ""}
                                 isCustomer={true}
+                                isSelected={isSelected(dish.id)}
                                 options={dish.options}
                                 orderStarted={orderStarted}
                                 addItemToOrder={addItemToOrder}
                                 removeFromOrder={removeFromOrder}
-                                addOptionToItem={addOptionToItem}
-                            />
+                            >
+                            {/* React 엘리먼트도 객체라서 prop으로 전달이 가능하다. 
+                            여기에서 prop으로 정의하고 
+                            Dish에서 prop으로 받을 수 있다.(children) */}
+                            {dish.options?.map((option, index) => (
+                                <DishOption 
+                                    key={index}
+                                    dishId={dish.id}
+                                    option={option}
+                                    isSelected={isSelected(dish.id)}
+                                    isOptionSelected={isOptionSelected(dish.id, option.name)}
+                                    addOptionToItem={addOptionToItem}
+                                    removeOptionFromItem={removeOptionFromItem}
+                                />
+                            ))}
+                            </Dish>
                         ))}
                     </div>
                 </div>
