@@ -8,6 +8,7 @@ import { restaurant, restaurantVariables } from "../../__generated__/restaurant"
 import { CreateOrderItemInput } from "../../__generated__/globalTypes";
 import { DishOption } from "../../components/dish-option";
 import { createOrder, createOrderVariables } from "../../__generated__/createOrder";
+import { CreateOrderInput } from "../../__generated__/globalTypes";
 
 const RESTAURANT_QUERY = gql`
     query restaurant($input:RestaurantInput!) {
@@ -76,16 +77,37 @@ export const Restaurant = () => {
             alert("It's empty order!");
             return;
         }
-        // const ok = window.confirm("You are about to place an order");
+        let sum:number = 0;
+        orderItems.map((order) => {
+            if(order.extra) 
+                sum+=order.extra;
+            if(order.options) {
+                order.options.map((option) => {
+                    if(option.extra)
+                        sum+=option.extra;
+                })
+            }
+        });
+        
+        console.log(orderItems);
+        
+        const ok = window.confirm(`
+            "메뉴: "
+            ${orderItems.map((order) => {
+                if(order.name)
+                    return order.name;
+            })}
+            합계: $${sum}`
+        );
         // if(ok) {
-            createOrderMutation({
-                variables: {
-                    input:{
-                        restaurantId:+params.id,
-                        items:orderItems,
-                    },
-                },
-            });
+            // createOrderMutation({
+            //     variables: {
+            //         input:{
+            //             restaurantId:+params.id,
+            //             items:orderItems,
+            //         },
+            //     },
+            // });
         // };
     };
     const getItem = (dishId:number) => {
@@ -94,36 +116,48 @@ export const Restaurant = () => {
     const isSelected = (dishId:number) => {
         return Boolean(getItem(dishId));
     }
-    const addItemToOrder = (dishId: number) => {
+    const addItemToOrder = (dishId: number, extra:number) => {
         if(isSelected(dishId)) {
             return;
         }
-        setOrderItems((current) => [{dishId, options: []}, ...current]);
+        // console.log(extra);
+        
+        setOrderItems((current) => [{dishId, extra, options: []}, ...current]);
     };
     const removeFromOrder = (dishId:number) => {
         setOrderItems((current) => current.filter((dish) => dish.dishId !== dishId));
     };
-    const addOptionToItem = (dishId:number, optionName:string) => {
+    const addOptionToItem = (dishId:number, optionName:string, optionExtra?:number, extra?:number) => {
         if(!isSelected(dishId)) {
             return;
         }
         const oldItem = getItem(dishId);
-        // console.log(option);
+        console.log(extra);
         
         if(oldItem) {
             const hasOption = Boolean(
                 oldItem.options?.find((aOption) => aOption.name === optionName)
             );
+            const aExtra = extra ? extra : 0;
+            const aOptionExtra = optionExtra ? optionExtra : 0;
             if(!hasOption){
                 removeFromOrder(dishId);
                 setOrderItems((current) => [
-                    {dishId, options:[{name: optionName}, ...oldItem.options!]},
+                    {
+                        dishId, 
+                        extra:aExtra, 
+                        options:[{
+                            name: optionName, 
+                            extra:aOptionExtra
+                            }, 
+                            ...oldItem.options!
+                        ]},
                     ...current,
                 ]);
             }
         }
     };
-    const removeOptionFromItem = (dishId:number, optionName:string) => {
+    const removeOptionFromItem = (dishId:number, optionName:string, extra:number) => {
         if(!isSelected(dishId)) {
             return;
         }
@@ -134,6 +168,7 @@ export const Restaurant = () => {
             setOrderItems((current) => [
                 {
                     dishId,
+                    extra,
                     options: oldItem.options?.filter(
                         (option) => option.name !== optionName
                     ),
@@ -152,7 +187,7 @@ export const Restaurant = () => {
     const getOptionFromItem = (item: CreateOrderItemInput, optionName:string) => {
         return item.options?.find((option) => option.name === optionName)
     };
-    console.log(orderItems);
+    // console.log(orderItems);
     return (
         <div>
             <div className="bg-gray-800 py-28 bg-contain bg-center relative" style={{backgroundImage: `url(${data?.restaurant.restaurant?.coverImg})`,
@@ -173,7 +208,7 @@ export const Restaurant = () => {
                         </button>
                     }
                     {orderStarted &&(
-                        <div className="grid">
+                        <div>
                             <button onClick={triggerConfirmOrder} className="btn px-10 mr-2">
                                 {placingOrder ? "Loading..." : "Confirm Order"}
                             </button>
@@ -205,6 +240,7 @@ export const Restaurant = () => {
                                 <DishOption 
                                     key={index}
                                     dishId={dish.id}
+                                    price={dish.price + ""}
                                     option={option}
                                     isSelected={isSelected(dish.id)}
                                     isOptionSelected={isOptionSelected(dish.id, option.name)}

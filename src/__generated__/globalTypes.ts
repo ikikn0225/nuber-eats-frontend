@@ -39,6 +39,8 @@ export interface CreateOrderInput {
 
 export interface CreateOrderItemInput {
   dishId: number;
+  name?: string | null;
+  extra?: number | null;
   options?: OrderItemOptionInputType[] | null;
 }
 
@@ -76,6 +78,7 @@ export interface MyRestaurantInput {
 
 export interface OrderItemOptionInputType {
   name: string;
+  extra?: number | null;
   choice?: string | null;
 }
 
