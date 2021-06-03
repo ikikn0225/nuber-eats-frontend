@@ -173,11 +173,11 @@ export const Restaurant = () => {
                         </button>
                     }
                     {orderStarted &&(
-                        <div className="grid">
+                        <div className="">
                             <button onClick={triggerConfirmOrder} className="btn px-10 mr-2">
                                 {placingOrder ? "Loading..." : "Confirm Order"}
                             </button>
-                            <button onClick={triggerCancelOrder} className="btn bg-red-600 px-10 mr-2">
+                            <button onClick={triggerCancelOrder} className="btn hover:bg-red-600 bg-black px-10 mr-2">
                                 Cancel Order
                             </button>
                         </div>
