@@ -45,6 +45,6 @@ export const Order = () => {
     console.log(data);
     
     return (
-        <h1>Order: #{params.id}</h1>
+        <h1>#{params.id}</h1>
     )
 }
