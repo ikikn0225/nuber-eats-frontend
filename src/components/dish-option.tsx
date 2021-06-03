@@ -4,14 +4,16 @@ import { restaurant_restaurant_restaurant_menu_options } from "../__generated__/
 interface IDishOptionProps {
     dishId:number;
     option:restaurant_restaurant_restaurant_menu_options;
+    price:string;
     isSelected?:boolean;
     isOptionSelected?:boolean;
-    addOptionToItem: (dishId:number, optionName:string) => void;
-    removeOptionFromItem: (dishId:number, optionName:string) => void;
+    addOptionToItem: (dishId:number, optionName:string, extra?:number, optionExtra?:number) => void;
+    removeOptionFromItem: (dishId:number, optionName:string, extra:number) => void;
 }
 
 export const DishOption:React.FC<IDishOptionProps> = ({
     dishId,
+    price,
     option,
     isSelected,
     isOptionSelected,
@@ -20,9 +22,13 @@ export const DishOption:React.FC<IDishOptionProps> = ({
 }) => {
     const onClick = () => {
         if(isOptionSelected) {
-            removeOptionFromItem(dishId, option.name);
+            removeOptionFromItem(dishId, option.name, +price);
         } else {
-            addOptionToItem(dishId, option.name);
+            if(option.extra) {
+                addOptionToItem(dishId, option.name, option.extra, +price);
+            } else {
+                addOptionToItem(dishId, option.name, 0, +price);
+            }
         }
     }
     return (
