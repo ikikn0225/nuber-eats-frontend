@@ -3,7 +3,9 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Restaurant } from "../../components/restaurant";
-import { RESTAURANT_FRAGMENT } from "../../fragment";
+import { FULL_ORDER_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
+import { useMe } from "../../hooks/useMe";
+import { getOrders, getOrdersVariables } from "../../__generated__/getOrders";
 import { myRestaurants } from "../../__generated__/myRestaurants";
 
 export const MY_RESTAURANTS_QUERY = gql`
@@ -19,14 +21,48 @@ export const MY_RESTAURANTS_QUERY = gql`
   ${RESTAURANT_FRAGMENT}
 `;
 
+const GET_ORDERS = gql `
+  query getOrders($input: GetOrdersInput!) {
+    getOrders(input:$input) {
+      ok
+      error
+      orders {
+        ...FullOrderParts
+      }
+    }
+  }
+  ${FULL_ORDER_FRAGMENT}
+`;
+
 export const MyRestaurants = () => {
     const { data } = useQuery<myRestaurants>(MY_RESTAURANTS_QUERY);
+    const {data: userData} = useMe();
+    const { data: orderData } = useQuery<getOrders, getOrdersVariables>(GET_ORDERS, {
+      variables: {
+        input: {
+          id: userData?.me.id,
+          
+        }
+      }
+    })
     return (
       <div>
         <Helmet>
           <title>My Restaurants</title>
         </Helmet>
         <div className="max-w-screen-2xl mx-auto mt-32">
+        <h2 className="text-4xl font-medium mb-10">My Restaurant's Orders</h2>
+          {orderData?.getOrders.ok && orderData.getOrders.orders?.length === 0 ? (
+            <>
+              <h4 className="text-xl mb-5">You have no restaurants.</h4>
+            </>
+          ) : (
+            <div>
+              {orderData?.getOrders.orders?.map((order) => (
+                
+              ))}
+            </div>
+          )}
           <h2 className="text-4xl font-medium mb-10">My Restaurants</h2>
           <Link className="text-green-600 hover:underline" to="/add-restaurant">
             Create Restaurant &rarr;

@@ -46,7 +46,7 @@ export const ConfirmEmail = () => {
       onCompleted,
     }
   );
-  useEffect(() => { //렌더링 이후에 어떤 일을 수행해야하는지 말한다.
+  useEffect(() => { // 어떤 effect를 발생시키고 싶을때 사용한다. 렌더링 이후에 어떤 일을 수행해야하는지 말한다. 
     const [_, code] = window.location.href.split("code=");
     verifyEmail({
       variables: {

@@ -14,7 +14,7 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: {
-      'x-jwt': authTokenVar() || ""
+      "x-jwt": authTokenVar() || ""
     },
   }
 });
@@ -46,22 +46,22 @@ const splitLink = split(
 
 export const client = new ApolloClient({
   link: splitLink,
-cache: new InMemoryCache({
-    typePolicies: {
-        Query: {
-            fields: {
-                isLoggedIn: {
-                    read() {
-                        return isLoggedInVar();
-                    },
-                },
-                token: {
-                    read() {
-                        return authTokenVar();
-                    }
-                }
-            }
-        }
-    }
-})
+  cache: new InMemoryCache({
+      typePolicies: {
+          Query: {
+              fields: {
+                  isLoggedIn: {
+                      read() {
+                          return isLoggedInVar();
+                      },
+                  },
+                  token: {
+                      read() {
+                          return authTokenVar();
+                      }
+                  }
+              }
+          }
+      }
+  })
 });
