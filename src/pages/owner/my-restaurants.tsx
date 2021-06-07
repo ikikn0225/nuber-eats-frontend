@@ -56,11 +56,13 @@ export const MyRestaurants = () => {
             <>
               <h4 className="text-xl mb-5">You have no restaurants.</h4>
             </>
-          ) : (
+          ) 
+          : (
             <div>
-              {orderData?.getOrders.orders?.map((order) => (
+              {/* {orderData?.getOrders.orders?.map((order) => (
                 
-              ))}
+              ))} */}
+              <h4 className="text-xl mb-5">You have restaurants.</h4>
             </div>
           )}
           <h2 className="text-4xl font-medium mb-10">My Restaurants</h2>
