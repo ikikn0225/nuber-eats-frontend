@@ -58,13 +58,6 @@ export const Order = () => {
                 }
         }
     });
-    const {data:subscriptionData} = useSubscription<orderUpdates, orderUpdatesVariables>(ORDER_SUBSCRIPTION, {
-        variables: {
-            input: {
-                id: +params.id,
-            },
-        },
-    });
     const [editOrderMutation] = useMutation<editOrder, editOrderVariables>(EDIT_ORDER)
     const onButtonClick = (newStatus: OrderStatus) => {
       editOrderMutation ({

@@ -85,7 +85,6 @@ export interface GetOrderInput {
 }
 
 export interface GetOrdersInput {
-  id?: number | null;
   status?: OrderStatus | null;
 }
 
