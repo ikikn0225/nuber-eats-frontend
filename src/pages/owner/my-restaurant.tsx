@@ -80,7 +80,7 @@ export const MyRestaurant = () => {
     const history = useHistory();
     useEffect(()=> {
       if(subscriptionData?.pendingOrders.id) {
-        history.push(`/orders/${subscriptionData.pendingOrders.id}`);
+        history.push(`/order/${subscriptionData.pendingOrders.id}`);
       }
     }, [subscriptionData]);
         return (

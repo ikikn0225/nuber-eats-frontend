@@ -152,6 +152,12 @@ export const Order = () => {
                       Order Cooked
                     </button>
                   )}
+                    {data?.getOrder.order?.status !== OrderStatus.Cooking &&
+                        data?.getOrder.order?.status !== OrderStatus.Pending && (
+                            <span className="text-center mt-5 mb-3 text-2xl text-green-600">
+                                Status: {data?.getOrder.order?.status}
+                            </span>        
+                    )}
                 </>
               )}
             </div>
