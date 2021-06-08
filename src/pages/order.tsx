@@ -58,13 +58,6 @@ export const Order = () => {
                 }
         }
     });
-    const {data:subscriptionData} = useSubscription<orderUpdates, orderUpdatesVariables>(ORDER_SUBSCRIPTION, {
-        variables: {
-            input: {
-                id: +params.id,
-            },
-        },
-    });
     const [editOrderMutation] = useMutation<editOrder, editOrderVariables>(EDIT_ORDER)
     const onButtonClick = (newStatus: OrderStatus) => {
       editOrderMutation ({
@@ -159,6 +152,12 @@ export const Order = () => {
                       Order Cooked
                     </button>
                   )}
+                    {data?.getOrder.order?.status !== OrderStatus.Cooking &&
+                        data?.getOrder.order?.status !== OrderStatus.Pending && (
+                            <span className="text-center mt-5 mb-3 text-2xl text-green-600">
+                                Status: {data?.getOrder.order?.status}
+                            </span>        
+                    )}
                 </>
               )}
             </div>
