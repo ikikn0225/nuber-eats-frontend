@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { Restaurant } from "../../components/restaurant";
 import { FULL_ORDER_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
 import { useMe } from "../../hooks/useMe";
 import { getMyOrders } from "../../__generated__/getMyOrders";
-import { getOrders, getOrdersVariables } from "../../__generated__/getOrders";
+// import { getOrders, getOrdersVariables } from "../../__generated__/getOrders";
 import { myRestaurants } from "../../__generated__/myRestaurants";
 
 export const MY_RESTAURANTS_QUERY = gql`
