@@ -20,7 +20,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "types": [
-      "google.maps"
+      "google.maps",
+      "node"
     ]
   },
   "include": [
